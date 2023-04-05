@@ -1,4 +1,4 @@
-let tr = true, table;
+let isedit = false, table , indexvalue;
 
 let employeedata;
 const employee = {};
@@ -10,84 +10,121 @@ function enable_district() {  // in the select always will use onchenge event
   document.getElementById("enable").removeAttribute("disabled")
 }
 
-//function for add data of employees
+
+//function for add and update data of employees
 
 function upsertEmployee() {
 
-  if (validateform() == true) {
+  event.preventDefault();
 
-    document.getElementsByClassName("btn")[2].type = "submit";
+  if (isedit) {
+    if (validateform() == true) {
 
-    if (localStorage.getItem("users") == null) {
-      employeedata = []
-    } else {
-      employeedata = JSON.parse(localStorage.getItem("users")) // 
+      document.getElementsByClassName("btn")[2].type = "submit";
+
+      employeedata[indexvalue].name = document.getElementsByTagName("input")[1].value
+
+      employeedata[indexvalue].dob = document.getElementById("DOB").value
+
+      employeedata[indexvalue].state = document.getElementById("select").value
+
+      employeedata[indexvalue].district = document.getElementById("enable").value
+
+      employeedata[indexvalue].email = document.getElementById("exampleInputEmail1").value
+
+      employeedata[indexvalue].joiningdate = document.getElementById("Joining").value
+
+      if (document.getElementById("flexRadioDefault1").checked) {
+        employeedata[indexvalue].gender = document.getElementById("flexRadioDefault1").value
+      } else if (document.getElementById("flexRadioDefault2").checked) {
+        employeedata[indexvalue].gender = document.getElementById("flexRadioDefault2").value
+      }
+      else if (document.getElementById("flexRadioDefault3").checked) {
+        employeedata[indexvalue].gender = document.getElementById("flexRadioDefault3").value
+      }
+
+      if (document.getElementById("intern1").checked) {
+        employeedata[indexvalue].interntype = document.getElementById("intern1").value
+      } else if (document.getElementById("intern2").checked) {
+        employeedata[indexvalue].interntype = document.getElementById("intern2").value
+      }
+      localStorage.setItem("users", JSON.stringify(employeedata)) // again sending refreshing data with new data into local storage
     }
+   
+ 
+  }else{
 
-    employee.uniqueId = new Date().getTime();
-    employee.name = document.getElementsByTagName("input")[1].value;
+    if (validateform() == true) {
 
-    if (document.getElementById("flexRadioDefault1").checked) {
-      employee.gender = document.getElementById("flexRadioDefault1").value
-    } else if (document.getElementById("flexRadioDefault2").checked) {
-      employee.gender = document.getElementById("flexRadioDefault2").value
-    }
-    else if (document.getElementById("flexRadioDefault3").checked) {
-      employee.gender = document.getElementById("flexRadioDefault3").value
-    }
-    employee.dob = document.getElementById("DOB").value
-
-    employee.state = document.getElementById("select").value
-
-    employee.district = document.getElementById("enable").value
-
-    employee.email = document.getElementById("exampleInputEmail1").value
-
-    if (document.getElementById("intern1").checked) {
-      employee.interntype = document.getElementById("intern1").value
-    } else if (document.getElementById("intern2").checked) {
-      employee.interntype = document.getElementById("intern2").value
-    }
-    employee.joiningdate = document.getElementById("Joining").value
-
-    employeedata.push(employee);
-
-    localStorage.setItem("users", JSON.stringify(employeedata))
-    showdata();
-  }
+      document.getElementsByClassName("btn")[2].type = "submit";
   
+      if (localStorage.getItem("users") == null) {
+        employeedata = []
+      } else {
+        employeedata = JSON.parse(localStorage.getItem("users")) // 
+      }
+  
+      employee.uniqueId = new Date().getTime();
+      employee.name = document.getElementsByTagName("input")[1].value;
+  
+      if (document.getElementById("flexRadioDefault1").checked) {
+        employee.gender = document.getElementById("flexRadioDefault1").value
+      } else if (document.getElementById("flexRadioDefault2").checked) {
+        employee.gender = document.getElementById("flexRadioDefault2").value
+      }
+      else if (document.getElementById("flexRadioDefault3").checked) {
+        employee.gender = document.getElementById("flexRadioDefault3").value
+      }
+      employee.dob = document.getElementById("DOB").value
+  
+      employee.state = document.getElementById("select").value
+  
+      employee.district = document.getElementById("enable").value
+  
+      employee.email = document.getElementById("exampleInputEmail1").value
+  
+      if (document.getElementById("intern1").checked) {
+        employee.interntype = document.getElementById("intern1").value
+      } else if (document.getElementById("intern2").checked) {
+        employee.interntype = document.getElementById("intern2").value
+      }
+      employee.joiningdate = document.getElementById("Joining").value
+  
+      employeedata.push(employee);
+  
+      localStorage.setItem("users", JSON.stringify(employeedata))
+    }
+  }
+  showdata();
 }
 
 
-//Function for show data on screen..
+//Function for bind data on table..
 
 function showdata() {
 
   employeedata = JSON.parse(localStorage.getItem("users"))
+  table = document.getElementById("tBody")
+  table.innerHTML = ""
 
-  table = document.getElementsByClassName("table")[0]
-  employeedata.forEach((value, index) => {
-    table.innerHTML +=
-      ` <tr class = "delete">
-     <td>${value.uniqueId}</td>
-     <td>${value.name}</td>
-     <td>${value.gender}</td>
-     <td>${value.dob}</td>
-     <td>${value.state}</td>
-     <td>${value.district}</td>
-     <td>${value.email}</td>
-     <td>${value.interntype}</td>
-     <td>${value.joiningdate}</td>
-     <td><i class="bi bi-pencil me-2 clip" onclick="editdata(${index})"></i> <i class="bi bi-trash3 clip" onclick="deletedata(${index})"></i></td>
-   </tr>`
-
-
-  });
-
+  if (employeedata !== null) {
+    employeedata.forEach((value, index) => {
+      table.innerHTML +=
+        ` <tr class = "delete">
+       <td>${value.uniqueId}</td>
+       <td>${value.name}</td>
+       <td>${value.gender}</td>
+       <td>${value.dob}</td>
+       <td>${value.state}</td>
+       <td>${value.district}</td>
+       <td>${value.email}</td>
+       <td>${value.interntype}</td>
+       <td>${value.joiningdate}</td>
+       <td><i class="bi bi-pencil me-2 clip" onclick="editdata(${index})"></i> <i class="bi bi-trash3 clip" onclick="deletedata(${index})"></i></td>
+     </tr>`
+    });
+  }
 }
-
-
-
 
 
 // function for delete data
@@ -100,24 +137,17 @@ function deletedata(index) {
   if (agree) {
     employeedata.splice(index, 1)
     localStorage.setItem("users", JSON.stringify(employeedata))
-    document.getElementsByClassName("delete")[index].remove() 
-    showdata();
+    document.getElementsByClassName("delete")[index].remove()
   }
 
 }
 
 
 
-// Function of edit existing data..
+// Function of binding input values.
+
 
 function editdata(index) {
-
-  if (localStorage.getItem("users") == null) {
-    employeedata = []
-  } else {
-    employeedata = JSON.parse(localStorage.getItem("users"))
-  }
-
   document.getElementsByTagName("input")[1].value = employeedata[index].name
 
   document.getElementById("DOB").value = employeedata[index].dob
@@ -149,51 +179,15 @@ function editdata(index) {
     document.getElementById("intern2").checked = true
   }
 
-  document.getElementsByClassName("btn")[1].style.display = "block"; // update button
-  document.getElementsByClassName("btn")[2].style.display = "none"; // submit button
-
-
-  //update button..
-  document.getElementsByClassName("btn")[1].onclick = () => {
-
-    if (validateform() == true) {
-      employeedata[index].name = document.getElementsByTagName("input")[1].value
-
-      employeedata[index].dob = document.getElementById("DOB").value
-
-      employeedata[index].state = document.getElementById("select").value
-
-      employeedata[index].district = document.getElementById("enable").value
-
-      employeedata[index].email = document.getElementById("exampleInputEmail1").value
-
-      employeedata[index].joiningdate = document.getElementById("Joining").value
-
-      if (document.getElementById("flexRadioDefault1").checked) {
-        employeedata[index].gender = document.getElementById("flexRadioDefault1").value
-      } else if (document.getElementById("flexRadioDefault2").checked) {
-        employeedata[index].gender = document.getElementById("flexRadioDefault2").value
-      }
-      else if (document.getElementById("flexRadioDefault3").checked) {
-        employeedata[index].gender = document.getElementById("flexRadioDefault3").value
-      }
-
-      if (document.getElementById("intern1").checked) {
-        employeedata[index].interntype = document.getElementById("intern1").value
-      } else if (document.getElementById("intern2").checked) {
-        employeedata[index].interntype = document.getElementById("intern2").value
-      }
-
-      localStorage.setItem("users", JSON.stringify(employeedata)) // again sending refreshing data with new data into local storage
-      location.reload();
-    }
-  }
+  isedit = true;
+  indexvalue = index;
+  window.scrollTo(0 , 50);
 }
 
 
 
 
-//Function for validation of form..
+// //Function for validation of form..
 
 function validateform() {
 
@@ -271,12 +265,6 @@ function validateform() {
   }
 
   return true
-}
-
-
-function hideupdatebutton() {
-  document.getElementsByClassName("btn")[1].style.display = "none"; // update button
-  document.getElementsByClassName("btn")[2].style.display = "block"; // submit button
 }
 
 document.onload = showdata();
